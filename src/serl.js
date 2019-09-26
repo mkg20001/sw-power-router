@@ -26,8 +26,9 @@ function serializeRequest (request) {
       serialized.body = body
       return Promise.resolve(serialized)
     })
+  } else {
+    return Promise.resolve(serialized)
   }
-  return Promise.resolve(serialized)
 }
 
 /**

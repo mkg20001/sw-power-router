@@ -1,13 +1,14 @@
 'use strict'
 
 const Boom = require('@hapi/boom')
+const Subtext = require('@hapi/subtext')
 
 const {
   serializeRequest,
   serializeQuery
 } = require('./serl')
 
-function parseRequest (r, event) {
+async function parseRequest (r, event) {
   /*
 
     request.app: doable
@@ -36,7 +37,7 @@ function parseRequest (r, event) {
 
 */
   const request = {}
-  const parsed = serializeRequest(event.request)
+  const parsed = await serializeRequest(event.request)
   const route = r.route
 
   const url = new URL(event.request.url)
@@ -66,6 +67,7 @@ function parseRequest (r, event) {
   request.path = url.pathname
 
   // payload: TODO
+  request.payload = parsed.body // TODO: parse json
   // plugins
   // pre
   // response
@@ -88,8 +90,8 @@ function parseRequest (r, event) {
   return request
 }
 
-function processRoute (r, event) {
-  const request = parseRequest(r, event)
+async function processRoute (r, event) {
+  const request = await parseRequest(r, event)
 
   const route = r.route
 
