@@ -3,6 +3,9 @@
 const Call = require('@hapi/call')
 const Boom = require('@hapi/boom')
 
+// TODO: add @hapi/subtext payload parsing
+// TODO: add h() response creation + full h() api compat
+
 module.exports = (self) => {
   const router = new Call.Router()
 
