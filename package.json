@@ -1,0 +1,22 @@
+{
+  "name": "sw-power-router",
+  "version": "0.0.1",
+  "description": "A powerfull router for your service worker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "service",
+    "worker",
+    "routing",
+    "engine",
+    "hapi"
+  ],
+  "author": "Maciej Krüger <mkg20001@gmail.com>",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "@hapi/boom": "^7.4.10",
+    "@hapi/call": "^5.1.1"
+  }
+}
