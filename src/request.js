@@ -2,6 +2,11 @@
 
 const Boom = require('@hapi/boom')
 
+const {
+  serializeRequest,
+  serializeQuery
+} = require('./serl')
+
 function parseRequest (r, event) {
   /*
 
@@ -31,6 +36,7 @@ function parseRequest (r, event) {
 
 */
   const request = {}
+  const parsed = serializeRequest(event.request)
   const route = r.route
 
   const url = new URL(event.request.url)
@@ -64,7 +70,9 @@ function parseRequest (r, event) {
   // pre
   // response
   // preResponses
+
   // query
+  request.query = serializeQuery(url.searchParams)
 
   // raw
   request.raw = event.request
@@ -75,6 +83,7 @@ function parseRequest (r, event) {
   // state
   // url
   request.url = event.request.url
+  request._url = url
 
   return request
 }

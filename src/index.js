@@ -1,7 +1,6 @@
 'use strict'
 
 const Call = require('@hapi/call')
-const Boom = require('@hapi/boom')
 
 const Request = require('./request')
 const Route = require('./route')
