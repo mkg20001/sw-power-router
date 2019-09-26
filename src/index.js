@@ -2,6 +2,7 @@
 
 const Call = require('@hapi/call')
 const Boom = require('@hapi/boom')
+const Handler = require('./handleRequest')
 
 // NOTE: call takes route methods only in lowercase
 // TODO: add @hapi/subtext payload parsing
@@ -10,49 +11,13 @@ const Boom = require('@hapi/boom')
 
 module.exports = (self) => {
   const router = new Call.Router()
+  const state = {app: {}}
 
-  async function tryRoute (event) {
-    try {
-      const r = router.route(event.request.method.toLowerCase(), new URL(event.request.url).pathname)
-
-      if (r instanceof Error) {
-        throw r
-      }
-
-      const res = await r.route.handler({
-        request: event.request,
-        params: r.params,
-        route: r.route
-      })
-
-      if (res instanceof Response) {
-        return res
-      } else if (typeof res === 'object') {
-        return new Response(JSON.stringify(res), {
-          headers: {'Content-Type': 'application/json'}
-        })
-      } else if (typeof res === 'string') {
-        return new Response(res)
-      } else {
-        throw Boom.badImplementation('Invalid response')
-      }
-    } catch (err) {
-      if (!err.isBoom) {
-        err = Boom.badImplementation(err.toString()) // eslint-disable-line no-ex-assign
-      }
-
-      console.error(err)
-
-      return new Response(JSON.stringify(err.output.payload), {
-        headers: Object.assign(err.output.headers, {'Content-Type': 'application/json'}),
-        status: err.output.statusCode
-      })
-    }
-  }
+  const handler = Handler(router, state)
 
   self.addEventListener('fetch', (event) => {
     if (event.request.url.includes(self.location.origin)) { // if we are in SW scope
-      event.respondWith(tryRoute(event))
+      event.respondWith(handler(event, state))
     } else {
       return event.respondWith(fetch(event.request))
     }
