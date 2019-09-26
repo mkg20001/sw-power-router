@@ -2,7 +2,7 @@
   "name": "sw-power-router",
   "version": "0.0.1",
   "description": "A powerfull router for your service worker",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +18,14 @@
   "dependencies": {
     "@hapi/boom": "^7.4.10",
     "@hapi/call": "^5.1.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkg20001/sw-power-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mkg20001/sw-power-router/issues"
+  },
+  "homepage": "https://github.com/mkg20001/sw-power-router#readme"
 }
