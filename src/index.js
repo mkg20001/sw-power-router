@@ -12,6 +12,10 @@ module.exports = (self) => {
   async function tryRoute (event) {
     try {
       const r = router.route(event.request.method, new URL(event.request.url).pathname)
+      if (r instanceof Error) {
+        throw r
+      }
+
       const res = await r.route.handler(r)
 
       if (res instanceof Response) {
@@ -29,6 +33,8 @@ module.exports = (self) => {
       if (!err.isBoom) {
         err = Boom.badImplementation(err.toString()) // eslint-disable-line no-ex-assign
       }
+
+      console.error(err)
 
       return new Response(JSON.stringify(err.output.payload), {
         headers: Object.assign(err.output.headers, {'Content-Type': 'application/json'}),
