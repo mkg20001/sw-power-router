@@ -45,7 +45,7 @@ function parseRequest (r, event) {
   // logs
 
   // method
-  request.method = request.method.ToLowerCase()
+  request.method = event.request.method.toLowerCase()
 
   // mime
 
