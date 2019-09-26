@@ -3,20 +3,27 @@
 const Call = require('@hapi/call')
 const Boom = require('@hapi/boom')
 
+// NOTE: call takes route methods only in lowercase
 // TODO: add @hapi/subtext payload parsing
 // TODO: add h() response creation + full h() api compat
+// TODO: copy some more of hapis stuff
 
 module.exports = (self) => {
   const router = new Call.Router()
 
   async function tryRoute (event) {
     try {
-      const r = router.route(event.request.method, new URL(event.request.url).pathname)
+      const r = router.route(event.request.method.toLowerCase(), new URL(event.request.url).pathname)
+
       if (r instanceof Error) {
         throw r
       }
 
-      const res = await r.route.handler(r)
+      const res = await r.route.handler({
+        request: event.request,
+        params: r.params,
+        route: r.route
+      })
 
       if (res instanceof Response) {
         return res
@@ -52,8 +59,10 @@ module.exports = (self) => {
   })
 
   return {
-    route: (options, handler) => router.add(options, {
-      handler
+    route: ({method, path}, handler) => router.add({ method: method.toLowerCase(), path }, {
+      handler,
+      method,
+      path
     })
   }
 }
