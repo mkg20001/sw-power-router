@@ -30,7 +30,7 @@ function parseRequest (r, event) {
     request.url
 
 */
-  const request = Object.assign({}, event.request)
+  const request = {}
   const route = r.route
 
   const url = new URL(event.request.url)
@@ -40,7 +40,8 @@ function parseRequest (r, event) {
 
   // auth
   // events
-  // headers: native
+  // headers
+  request.headers = event.request.headers
   // info
   // logs
 
@@ -67,11 +68,13 @@ function parseRequest (r, event) {
 
   // raw
   request.raw = event.request
+  request.rawEvent = event
 
   // route
   // server
   // state
-  // url: native
+  // url
+  request.url = event.request.url
 
   return request
 }
