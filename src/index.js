@@ -2,7 +2,9 @@
 
 const Call = require('@hapi/call')
 const Boom = require('@hapi/boom')
-const Handler = require('./handleRequest')
+
+const Request = require('./request')
+const Route = require('./route')
 
 // NOTE: call takes route methods only in lowercase
 // TODO: add @hapi/subtext payload parsing
@@ -11,23 +13,19 @@ const Handler = require('./handleRequest')
 
 module.exports = (self) => {
   const router = new Call.Router()
-  const state = {app: {}}
 
-  const handler = Handler(router, state)
+  const _request = Request(router)
+  const _route = Route(router)
 
   self.addEventListener('fetch', (event) => {
     if (event.request.url.includes(self.location.origin)) { // if we are in SW scope
-      event.respondWith(handler(event, state))
+      event.respondWith(_request(event))
     } else {
       return event.respondWith(fetch(event.request))
     }
   })
 
   return {
-    route: ({method, path}, handler) => router.add({ method: method.toLowerCase(), path }, {
-      handler,
-      method,
-      path
-    })
+    route: _route
   }
 }
