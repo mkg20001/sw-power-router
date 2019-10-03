@@ -1,7 +1,6 @@
 'use strict'
 
 const Boom = require('@hapi/boom')
-const Subtext = require('@hapi/subtext')
 
 const h = require('./h')
 
