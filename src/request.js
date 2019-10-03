@@ -3,6 +3,8 @@
 const Boom = require('@hapi/boom')
 const Subtext = require('@hapi/subtext')
 
+const h = require('./h')
+
 const {
   serializeRequest,
   serializeQuery
@@ -111,7 +113,7 @@ async function processRoute (r, event) {
 
   // TODO: response toolkit
 
-  const out = route.handler.call(route.bind, request)
+  const out = route.handler.call(route.bind, request, h(route, request))
 
   return out // will be resolved downstream if async
 }
@@ -128,6 +130,8 @@ module.exports = (router) => async (event) => {
 
     if (res instanceof Response) {
       return res
+    } else if (res['@h']) {
+      return res.build()
     } else if (typeof res === 'object') {
       return new Response(JSON.stringify(res), {
         headers: {'Content-Type': 'application/json'}

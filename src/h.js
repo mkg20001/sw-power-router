@@ -45,6 +45,9 @@ const Mimos = require('@hapi/mimos')
 
 const mimos = new Mimos()
 
+const {vf} = require('./util')
+const Joi = require('@hapi/joi')
+
 function createResponseToolkit (route, request, h, data) {
   const t = {
     app: route.app || {},
@@ -58,38 +61,39 @@ function createResponseToolkit (route, request, h, data) {
     statusCode: 200,
     variety: Buffer.isBuffer(data) ? 'buffer' : 'plain', // TODO: stream
 
-    bytes: (num) => {
+    bytes: vf(Joi.number().integer(), (num) => {
       t.headers['content-length'] = String(num)
 
       return t
-    },
-    charset: (charset) => {
+    }),
+    charset: vf(Joi.string().required(), (charset) => {
       priv.mime.charset = charset
 
       return t
-    },
-    code: (code) => {
+    }),
+    code: vf(Joi.number().min(100).max(999).required(), (code) => {
       t.statusCode = code
 
       return t
-    },
-    message: (msg) => {
+    }),
+    message: vf(Joi.string().required(), (msg) => {
       priv.statusText = msg
 
       return t
-    },
-    compressed: (encoding) => {
+    }),
+    compressed: vf(Joi.string().required(), (encoding) => {
       throw new Error('Unsupported')
-    },
-    created: (uri) => {
+    }),
+    created: vf(Joi.string().required(), (uri) => {
       t.statusCode = 201
       t.headers.location = uri
 
       return t
-    },
-    etag: (tag, opt) => {
-      if (!opt) { opt = {} }
-
+    }),
+    etag: vf(Joi.string().required(), Joi.object().keys({
+      weak: Joi.boolean().default(false),
+      vary: Joi.boolean().default(true)
+    }), (tag, opt) => {
       if (opt.weak) {
         tag = 'W/' + tag
       }
@@ -98,16 +102,123 @@ function createResponseToolkit (route, request, h, data) {
         tag += '-' + priv.encoding
       }
 
+      t.headers.etag = tag
+
       return t
+    }),
+    header: vf(Joi.string().required(), Joi.any().required(), Joi.object().keys({
+      append: Joi.boolean().default(false),
+      seperator: Joi.string().default(','),
+      override: Joi.boolean().default(true),
+      duplicate: Joi.boolean().default(true)
+    }), (name, value, opt) => {
+      // TODO: duplicate
+
+      if (t.headers[name] != null) {
+        if (opt.append) {
+          t.headers[name] += opt.seperator + value
+        } else if (opt.overwrite) {
+          t.headers[name] = value
+        } else {
+          throw new Error('Header value can not be written')
+        }
+      } else {
+        t.headers[name] = value
+      }
+
+      return t
+    }),
+    location: vf(Joi.string().required(), (uri) => {
+      t.headers.location = location
+
+      return t
+    }),
+    redirect: vf(Joi.string().required(), (uri) => {
+      t.headers.location = uri
+      t.statusCode = 302
+
+      const c = () => {
+        if (R.r) {
+          return R.p ? 301 : 302
+        } else {
+          return R.p ? 308 : 307
+        }
+      }
+
+      const R = priv.redirect = {}
+
+      t.temporary = () => {
+        R.p = false
+
+        t.statusCode = c()
+        return t
+      }
+
+      t.permanent = () => {
+        R.p = true
+
+        t.statusCode = c()
+        return t
+      }
+
+      t.rewritable = () => {
+        R.r = true
+
+        t.statusCode = c()
+        return t
+      }
+
+      return t
+    }),
+    replacer: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    spaces: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    state: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    suffix: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    ttl: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    type: (Joi.string().required(), (type) => {
+      priv.mime.type = type
+
+      return t
+    }),
+    unstate: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    vary: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+    takeover: (Joi.any().required(), () => {
+      throw new Error('TODO')
+    }),
+
+    build: () => {
+      t.headers['content-type'] = `${priv.mime.type}; charset=${priv.mime.charset}`
+
+      // TODO: encoding
+
+      return new Response(t.source, {
+        headers: t.headers,
+        statusText: priv.statusText,
+        status: t.statusCode
+      })
     },
-    header: (name, value, opt) => {
-      if (!opt) { opt = {} }
-    }
+    '@h': true
   }
 
   const priv = {
     mime: mimos.path(request.path)
   }
+
+  return t
 }
 
 module.exports = (route, request) => {
