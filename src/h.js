@@ -177,7 +177,7 @@ function createResponseToolkit (route, request, h, data) {
       throw new Error('TODO')
     }),
     state: () => {
-      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses1')
+      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses!')
     },
     suffix: (Joi.any().required(), () => {
       throw new Error('TODO')
@@ -191,7 +191,7 @@ function createResponseToolkit (route, request, h, data) {
       return t
     }),
     unstate: () => {
-      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses1')
+      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses!')
     },
     vary: (Joi.any().required(), () => {
       throw new Error('TODO')
