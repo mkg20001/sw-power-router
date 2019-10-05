@@ -176,9 +176,9 @@ function createResponseToolkit (route, request, h, data) {
     spaces: (Joi.any().required(), () => {
       throw new Error('TODO')
     }),
-    state: (Joi.any().required(), () => {
-      throw new Error('TODO')
-    }),
+    state: () => {
+      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses1')
+    },
     suffix: (Joi.any().required(), () => {
       throw new Error('TODO')
     }),
@@ -190,9 +190,9 @@ function createResponseToolkit (route, request, h, data) {
 
       return t
     }),
-    unstate: (Joi.any().required(), () => {
-      throw new Error('TODO')
-    }),
+    unstate: () => {
+      throw new Error('ServiceWorkers are not allowed to set cookies via synthesized responses1')
+    },
     vary: (Joi.any().required(), () => {
       throw new Error('TODO')
     }),
