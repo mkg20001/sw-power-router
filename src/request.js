@@ -49,7 +49,7 @@ async function parseRequest (r, event) {
   // auth
   // events
   // headers
-  request.headers = event.request.headers
+  request.headers = parsed.headers
   // info
   // logs
 
@@ -67,8 +67,17 @@ async function parseRequest (r, event) {
   // path
   request.path = url.pathname
 
-  // payload: TODO
-  request.payload = parsed.body // TODO: parse json
+  // payload // TODO: use lib
+  switch (request.headers['content-type']) {
+    case 'application/json': {
+      request.payload = JSON.parse(parsed.body)
+
+      break
+    }
+    default: {
+      request.payload = parsed.body
+    }
+  }
   // plugins
   // pre
   // response
@@ -142,6 +151,7 @@ module.exports = (router) => async (event) => {
     }
   } catch (err) {
     if (!err.isBoom) {
+      console.error(err)
       err = Boom.badImplementation(err.toString()) // eslint-disable-line no-ex-assign
     }
 

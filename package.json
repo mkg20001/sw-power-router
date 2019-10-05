@@ -16,7 +16,7 @@
   "author": "Maciej Krüger <mkg20001@gmail.com>",
   "license": "MPL-2.0",
   "dependencies": {
-    "@hapi/boom": "^7.4.10",
+    "@hapi/boom": "^8.0.1",
     "@hapi/call": "^5.1.1"
   },
   "devDependencies": {

@@ -82,10 +82,21 @@ function deserializeResponse (data) {
   return Promise.resolve(new Response(data.body, data))
 }
 
+/**
+ * Creates a Request from it's serialized version
+ *
+ * @param data
+ * @returns Promise
+ */
+function deserializeRequest (data) {
+  return Promise.resolve(new Request(data.body, data))
+}
+
 module.exports = {
   serializeHeaders,
   serializeQuery: serializeHeaders,
   serializeRequest,
   serializeResponse,
-  deserializeResponse
+  deserializeResponse,
+  deserializeRequest
 }
