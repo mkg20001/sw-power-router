@@ -215,7 +215,7 @@ function createResponseToolkit (route, request, h, data) {
   }
 
   const priv = {
-    mime: mimos.path(request.path)
+    mime: typeof data === 'string' ? mimos.path(request.path) : mimos.path('some.json')
   }
 
   return t
@@ -225,4 +225,6 @@ module.exports = (route, request) => {
   const h = {
     response: (data) => createResponseToolkit(route, request, h, data)
   }
+
+  return h
 }

@@ -74,6 +74,8 @@ module.exports = (router) => (options) => {
 
   const route = {}
 
+  // cache
+  route.cache = options.cache
   // route.options.app
   route.app = options.app
   // route.options.bind
