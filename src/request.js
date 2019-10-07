@@ -136,7 +136,9 @@ module.exports = (router) => async (event) => {
 
     const res = await processRoute(r, event)
 
-    if (res instanceof Response) {
+    if (res === undefined || res == null) {
+      throw Boom.badImplementation('Response is null or undefined')
+    } else if (res instanceof Response) {
       return res
     } else if (res['@h']) {
       return res.build()
