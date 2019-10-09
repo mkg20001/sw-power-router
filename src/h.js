@@ -205,7 +205,7 @@ function createResponseToolkit (route, request, h, data) {
 
       // TODO: encoding
 
-      return new Response(t.source, {
+      return new Response(typeof t.source === 'string' ? t.source : JSON.stringify(t.source), {
         headers: t.headers,
         statusText: priv.statusText,
         status: t.statusCode

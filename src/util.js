@@ -15,7 +15,7 @@ module.exports = {
         throw error
       }
 
-      f(...value)
+      return f(...value)
     }
   }
 }
