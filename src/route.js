@@ -72,29 +72,41 @@ module.exports = (router) => (options) => {
 
   */
 
-  const route = {}
+  const route = [options, options.options, options.config].filter(Boolean).map(options => {
+    const route = {}
 
-  // cache
-  route.cache = options.cache
-  // route.options.app
-  route.app = options.app
-  // route.options.bind
-  route.bind = options.bind
-  // route.options.cache: TODO2
-  // route.options.cors: TODO2
-  // route.options.description
-  route.description = options.description
-  // route.options.handler
-  route.handler = options.handler
-  // route.options.json
-  route.json = options.json
-  // route.options.notes: TODO (str or str[], copy)
-  route.notes = options.notes
-  // route.options.response: TODO2
-  // route.options.tags
-  route.tags = options.tags
-  // route.options.validate: TODO
-  route.validate = options.validate
+    // cache
+    route.cache = options.cache
+    // route.options.app
+    route.app = options.app
+    // route.options.bind
+    route.bind = options.bind
+    // route.options.cache: TODO2
+    // route.options.cors: TODO2
+    // route.options.description
+    route.description = options.description
+    // route.options.handler
+    route.handler = options.handler
+    // route.options.json
+    route.json = options.json
+    // route.options.notes: TODO (str or str[], copy)
+    route.notes = options.notes
+    // route.options.response: TODO2
+    // route.options.tags
+    route.tags = options.tags
+    // route.options.validate: TODO
+    route.validate = options.validate
+
+    return route
+  }).reduce((o, a) => {
+    for (const key in a) {
+      if (a[key] && !o[key]) {
+        o[key] = a[key]
+      }
+    }
+
+    return o
+  }, {})
 
   return router.add({
     method: options.method.toLowerCase(),
